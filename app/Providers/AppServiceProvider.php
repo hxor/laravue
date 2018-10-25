@@ -16,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Resource::withoutWrapping();
+        \Schema::defaultStringLength(191);
     }
 
     /**

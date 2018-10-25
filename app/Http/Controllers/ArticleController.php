@@ -37,7 +37,8 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $model = Article::create($request->all());
+        return new ArticleResource($model);
     }
 
     /**
@@ -71,7 +72,9 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        $article->update($request->all());
+        $model = Article::find($article->id);
+        return new ArticleResource($model);
     }
 
     /**
@@ -82,6 +85,7 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $model = $article->delete();
+        return 'Success';
     }
 }
