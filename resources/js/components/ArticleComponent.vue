@@ -1,6 +1,16 @@
 <template>
     <div>
         <h2>Articles</h2>
+        <form action="" @submit.prevent="addArticle">
+            <div class="form-group">
+                <input type="text" name="title" id="title" v-model="article.title" class="form-control" placeholder="Title">
+            </div>
+            <div class="form-group">
+                <textarea name="body" id="body" v-model="article.body" cols="30" rows="4" class="form-control" placeholder="Content"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Save</button>
+        </form>
+        <hr>
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <li v-bind:class="[{disabled: !pagination.prev_page_url}]" class="page-item"><a class="page-link" href="#" @click="fetchArticles(pagination.prev_page_url)">Previous</a></li>
@@ -34,6 +44,7 @@
                 edit: false
             }
         },
+
         methods: {
             fetchArticles(page_url) {
                 let vm = this;
@@ -45,6 +56,27 @@
                     vm.createPagination(res.meta, res.links);
                 })
                 .catch(err => console.log(err));
+            },
+
+            addArticle() {
+                if (this.edit === false) {
+                    fetch('api/article', {
+                        method: 'POST',
+                        body: JSON.stringify(this.article),
+                        headers: {
+                            'content-type': 'application/json'
+                        }
+                    }).then(res => res.json())
+                    .then(data => {
+                        this.article.title = '';
+                        this.article.body = '';
+                        alert('Article added');
+                        this.fetchArticles();
+                    })
+                    .catch(err => console.log(err))
+                } else {
+                    // Update
+                }
             },
 
             deleteArticle(id) {
@@ -59,6 +91,7 @@
                     .catch(err => console.log(err));
                 }
             },
+
             createPagination(meta, links) {
                 let pagination = {
                     current_page: meta.current_page,
