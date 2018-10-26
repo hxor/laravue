@@ -47578,6 +47578,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -47588,7 +47589,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 title: '',
                 body: ''
             },
-            article_id: '',
             pagination: {},
             edit: false
         };
@@ -47610,7 +47610,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return console.log(err);
             });
         },
-        addArticle: function addArticle() {
+        submitArticle: function submitArticle() {
             var _this2 = this;
 
             if (this.edit === false) {
@@ -47632,7 +47632,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             } else {
                 // Update
+                fetch('api/article/' + this.article.id, {
+                    method: 'put',
+                    body: JSON.stringify(this.article),
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                }).then(function (res) {
+                    return res.json();
+                }).then(function (data) {
+                    _this2.article.title = '';
+                    _this2.article.body = '';
+                    // alert('Article Edited');
+                    _this2.fetchArticles();
+                }).catch(function (err) {
+                    return console.log(err);
+                });
             }
+        },
+        editArticle: function editArticle(article) {
+            this.edit = true;
+            this.article.id = article.id;
+            this.article.title = article.title;
+            this.article.body = article.body;
         },
         deleteArticle: function deleteArticle(id) {
             var _this3 = this;
@@ -47684,7 +47706,7 @@ var render = function() {
           on: {
             submit: function($event) {
               $event.preventDefault()
-              return _vm.addArticle($event)
+              return _vm.submitArticle($event)
             }
           }
         },
@@ -47833,6 +47855,19 @@ var render = function() {
           _c("p", [_vm._v(_vm._s(article.body))]),
           _vm._v(" "),
           _c("hr"),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-white",
+              on: {
+                click: function($event) {
+                  _vm.editArticle(article)
+                }
+              }
+            },
+            [_vm._v("Edit")]
+          ),
           _vm._v(" "),
           _c(
             "button",

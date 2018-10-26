@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2>Articles</h2>
-        <form action="" @submit.prevent="addArticle">
+        <form action="" @submit.prevent="submitArticle">
             <div class="form-group">
                 <input type="text" name="title" id="title" v-model="article.title" class="form-control" placeholder="Title">
             </div>
@@ -24,6 +24,7 @@
             <h3>{{ article.title }}</h3>
             <p>{{ article.body }}</p>
             <hr>
+            <button @click="editArticle(article)" class="btn btn-white">Edit</button>
             <button @click="deleteArticle(article.id)" class="btn btn-danger">Delete</button>
         </div>
     </div>
@@ -39,7 +40,6 @@
                     title: '',
                     body: ''
                 },
-                article_id: '',
                 pagination: {},
                 edit: false
             }
@@ -58,7 +58,7 @@
                 .catch(err => console.log(err));
             },
 
-            addArticle() {
+            submitArticle() {
                 if (this.edit === false) {
                     fetch('api/article', {
                         method: 'POST',
@@ -76,7 +76,28 @@
                     .catch(err => console.log(err))
                 } else {
                     // Update
+                    fetch('api/article/' + this.article.id, {
+                        method: 'put',
+                        body: JSON.stringify(this.article),
+                        headers: {
+                            'content-type': 'application/json'
+                        }
+                    }).then(res => res.json())
+                    .then(data => {
+                        this.article.title = '';
+                        this.article.body = '';
+                        // alert('Article Edited');
+                        this.fetchArticles();
+                    })
+                    .catch(err => console.log(err))
                 }
+            },
+
+            editArticle(article) {
+                this.edit = true;
+                this.article.id = article.id;
+                this.article.title = article.title;
+                this.article.body = article.body;
             },
 
             deleteArticle(id) {
