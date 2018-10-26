@@ -13,6 +13,8 @@
         <div class="card card-body mb-2" v-for="(article, index) in articles" :key="index">
             <h3>{{ article.title }}</h3>
             <p>{{ article.body }}</p>
+            <hr>
+            <button @click="deleteArticle(article.id)" class="btn btn-danger">Delete</button>
         </div>
     </div>
 </template>
@@ -43,6 +45,19 @@
                     vm.createPagination(res.meta, res.links);
                 })
                 .catch(err => console.log(err));
+            },
+
+            deleteArticle(id) {
+                if (confirm('Are you sure?')) {
+                    fetch(`api/article/${id}`, {
+                        method: 'delete'
+                    })
+                    .then(data => {
+                        alert('Article removed');
+                        this.fetchArticles();
+                    })
+                    .catch(err => console.log(err));
+                }
             },
             createPagination(meta, links) {
                 let pagination = {
